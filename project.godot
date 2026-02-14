@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Utils="*res://scripts/utils.gd"
+World="*res://scripts/world.gd"
 
 [display]
 

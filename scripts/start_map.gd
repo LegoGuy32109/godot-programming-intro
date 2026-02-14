@@ -53,10 +53,17 @@ func _take_turn(direction: Vector2i) -> void:
 	if not _can_move_to(target_tile):
 		return
 
+	_update_player_facing(direction)
 	_set_cell(player_tile, CELL_FLOOR)
 	player_tile = target_tile
 	_set_cell(player_tile, CELL_PLAYER)
 	_snap_player_to_tile()
+
+func _update_player_facing(direction: Vector2i) -> void:
+	if direction.x < 0:
+		player.flip_h = true
+	elif direction.x > 0:
+		player.flip_h = false
 
 func _can_move_to(tile: Vector2i) -> bool:
 	return _get_cell(tile) == CELL_FLOOR
