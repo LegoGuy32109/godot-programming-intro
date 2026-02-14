@@ -23,6 +23,7 @@ World="*res://scripts/world.gd"
 [display]
 
 window/size/viewport_height=640
+window/stretch/mode="viewport"
 
 [gui]
 
@@ -45,3 +46,4 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/default_filters/use_nearest_mipmap_filter=true
 viewport/hdr_2d=true
+environment/defaults/default_clear_color=Color(0.7882353, 0.49411765, 0.32156864, 1)

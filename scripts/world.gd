@@ -10,27 +10,25 @@ func say(message: String, visible_seconds: float = DEFAULT_VISIBLE_SECONDS, fade
 		push_warning("World.say: Could not find Player/TextBubble container.")
 		return
 
-	var bubble := TEXT_BUBBLE_SCENE.instantiate()
+	var bubble := TEXT_BUBBLE_SCENE.instantiate() as Control
+	if bubble == null:
+		push_warning("World.say: text bubble scene root is not a Control.")
+		return
+
 	var label := bubble.get_node_or_null("MarginContainer/Label") as Label
 	if label != null:
 		label.text = message
 
 	container.add_child(bubble)
-	var bubble_canvas := bubble as CanvasItem
-	if bubble_canvas == null:
-		push_warning("World.say: text bubble root is not a CanvasItem.")
-		bubble.queue_free()
-		return
 
-	bubble_canvas.modulate.a = 1.0
-	bubble_canvas.scale.y = 0.0
+	bubble.modulate.a = 0.0
 
-	var pop_tween := create_tween()
-	pop_tween.tween_property(bubble_canvas, "scale:y", 1.0, 0.4).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	var fade_in_tween := create_tween()
+	fade_in_tween.tween_property(bubble, "modulate:a", 1.0, 0.4)
 
 	var fade_tween := create_tween()
 	fade_tween.tween_interval(maxf(visible_seconds, 0.0))
-	fade_tween.tween_property(bubble_canvas, "modulate:a", 0.0, maxf(fade_seconds, 0.01))
+	fade_tween.tween_property(bubble, "modulate:a", 0.0, maxf(fade_seconds, 0.01))
 	fade_tween.finished.connect(func() -> void:
 		if is_instance_valid(bubble):
 			bubble.queue_free()
