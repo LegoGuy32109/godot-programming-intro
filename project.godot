@@ -15,9 +15,22 @@ run/main_scene="uid://b0x7uiinmtg7b"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Utils="*res://scripts/utils.gd"
+
 [display]
 
 window/size/viewport_height=640
+
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
+theme/default_font_generate_mipmaps=true
+
+[internationalization]
+
+rendering/text_driver="ICU / HarfBuzz / Graphite (Built-in)"
 
 [physics]
 
@@ -29,4 +42,5 @@ textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=true
 viewport/hdr_2d=true

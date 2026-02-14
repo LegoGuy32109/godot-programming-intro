@@ -1,0 +1,6 @@
+[gd_resource type="LabelSettings" format=3 uid="uid://d1xbxcwlvdcdn"]
+
+[ext_resource type="FontFile" uid="uid://j38mei7wu48u" path="res://assets/fonts/Bitfantasy.ttf" id="1_d0ird"]
+
+[resource]
+font = ExtResource("1_d0ird")

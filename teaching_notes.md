@@ -3,6 +3,16 @@
 GDscript uses indentation to indicate lines of code
 Block based programming is like each line
 
+## Printing
+
+```gdscript
+func _ready():
+	print("Hello class!")
+	print(visible)
+	visible = false
+	print(visible)
+```
+
 ## Comments
 
 Using `#` to add comments in GDscript

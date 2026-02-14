@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://d3mcpxg8grd2l" path="res://assets/kenny-tiny-dungeon/Tilemap/tilemap_packed.png" id="1_qn1rc"]
 [ext_resource type="Texture2D" uid="uid://ee2jwalhfm1x" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0084.png" id="2_1n0d2"]
 [ext_resource type="Script" uid="uid://dqp1t3nosy1xs" path="res://scripts/start_map.gd" id="3_4g6jk"]
+[ext_resource type="Script" uid="uid://tefxs5r58apl" path="res://player.gd" id="4_y5hus"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y5hus"]
 resource_name = "Dungeon"
@@ -157,3 +158,19 @@ position = Vector2(288, 288)
 [node name="Player" type="Sprite2D" parent="Spawn" unique_id=1400408572]
 scale = Vector2(3, 3)
 texture = ExtResource("2_1n0d2")
+script = ExtResource("4_y5hus")
+
+[node name="TextBubbleContainer" type="VBoxContainer" parent="Spawn/Player" unique_id=625920146]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -34.98
+offset_top = -49.03
+offset_right = 54.02
+offset_bottom = -9.029999
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.59, 0.59)
+alignment = 2
