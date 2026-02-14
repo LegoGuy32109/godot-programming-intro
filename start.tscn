@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://d3mcpxg8grd2l" path="res://assets/kenny-tiny-dungeon/Tilemap/tilemap_packed.png" id="1_qn1rc"]
 [ext_resource type="Texture2D" uid="uid://ee2jwalhfm1x" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0084.png" id="2_1n0d2"]
+[ext_resource type="Script" uid="uid://dqp1t3nosy1xs" path="res://scripts/start_map.gd" id="3_4g6jk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y5hus"]
 resource_name = "Dungeon"
@@ -143,6 +144,7 @@ texture = ExtResource("1_qn1rc")
 sources/0 = SubResource("TileSetAtlasSource_y5hus")
 
 [node name="StartMap" type="Node2D" unique_id=2142925335]
+script = ExtResource("3_4g6jk")
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=515525185]
 scale = Vector2(4, 4)
