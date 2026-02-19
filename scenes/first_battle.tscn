@@ -1,7 +1,8 @@
 [gd_scene format=4 uid="uid://mpi5713h3as5"]
 
-[ext_resource type="Script" uid="uid://dmv4pxdnsxkto" path="res://scripts/rat_patrol.gd" id="1_25q8y"]
+[ext_resource type="Script" uid="uid://2xdv15kmc6q2" path="res://scripts/patrol.gd" id="1_25q8y"]
 [ext_resource type="TileSet" uid="uid://mxa4giuljqv6" path="res://tiles/tiles.tres" id="2_1gy2a"]
+[ext_resource type="Texture2D" uid="uid://c2pg3apdwcy2e" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0123.png" id="4_wrrkv"]
 [ext_resource type="Texture2D" uid="uid://bx8a6bxd02t5r" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0124.png" id="5_1gy2a"]
 
 [node name="FirstBattle" type="Node2D" unique_id=2142925335]
@@ -18,7 +19,17 @@ tile_set = ExtResource("2_1gy2a")
 [node name="EnemySpawn" type="Node2D" parent="." unique_id=318435931]
 position = Vector2(224, 160)
 
-[node name="Rat" type="Sprite2D" parent="EnemySpawn" unique_id=710245301]
+[node name="Rat" type="Sprite2D" parent="EnemySpawn" unique_id=710245301 groups=["Enemies"]]
 scale = Vector2(3, 3)
 texture = ExtResource("5_1gy2a")
 script = ExtResource("1_25q8y")
+
+[node name="EnemySpawn2" type="Node2D" parent="." unique_id=1660034862]
+position = Vector2(544, 96)
+
+[node name="Rat" type="Sprite2D" parent="EnemySpawn2" unique_id=1231913663 groups=["Enemies"]]
+scale = Vector2(3, 3)
+texture = ExtResource("4_wrrkv")
+flip_h = true
+script = ExtResource("1_25q8y")
+patrol_axis = 1
