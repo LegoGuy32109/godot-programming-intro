@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://bcsrx8rrk6u35"]
+
+[ext_resource type="Texture2D" uid="uid://ee2jwalhfm1x" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0084.png" id="1_3vyb7"]
+
+[node name="Player" type="Sprite2D" unique_id=1280679487]
+scale = Vector2(3, 3)
+texture = ExtResource("1_3vyb7")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=321654881]
+clip_contents = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -13.5
+offset_top = -160.845
+offset_right = -2.5
+offset_bottom = -26.845001
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
+
+[node name="TextBubble" type="VBoxContainer" parent="ScrollContainer" unique_id=1542005940]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 2
