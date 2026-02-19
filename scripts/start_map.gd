@@ -5,8 +5,10 @@ const GRID_HEIGHT := 10
 
 const CELL_FLOOR := 0
 const CELL_PLAYER := 1
+const IMPASSABLE_CUSTOM_DATA := "IMPASSABLE"
 
 @onready var ground: TileMapLayer = $Ground
+@onready var structures: TileMapLayer = $Structures
 @onready var player: Sprite2D = $Spawn/Player
 
 var world_grid: Array[Array] = []
@@ -66,7 +68,14 @@ func _update_player_facing(direction: Vector2i) -> void:
 		player.flip_h = false
 
 func _can_move_to(tile: Vector2i) -> bool:
-	return _get_cell(tile) == CELL_FLOOR
+	return _get_cell(tile) == CELL_FLOOR and not _is_impassable(tile)
+
+func _is_impassable(tile: Vector2i) -> bool:
+	var tile_data := structures.get_cell_tile_data(tile)
+	if tile_data == null:
+		return false
+
+	return bool(tile_data.get_custom_data(IMPASSABLE_CUSTOM_DATA))
 
 func _is_in_bounds(tile: Vector2i) -> bool:
 	return tile.x >= 0 and tile.x < GRID_WIDTH and tile.y >= 0 and tile.y < GRID_HEIGHT
