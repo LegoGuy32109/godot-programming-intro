@@ -7,7 +7,7 @@ const DEFAULT_FADE_SECONDS := 0.35
 func say(message: String, visible_seconds: float = DEFAULT_VISIBLE_SECONDS, fade_seconds: float = DEFAULT_FADE_SECONDS) -> void:
 	var container := _get_text_bubble_container()
 	if container == null:
-		push_warning("World.say: Could not find Player/TextBubble container.")
+		push_warning("World.say: Could not find TextBubble container.")
 		return
 
 	var bubble := TEXT_BUBBLE_SCENE.instantiate() as Control
@@ -39,5 +39,5 @@ func _get_text_bubble_container() -> VBoxContainer:
 	if scene == null:
 		return null
 
-	var container := scene.get_node_or_null("%TextBubble") as VBoxContainer
+	var container := scene.get_node_or_null("Spawn/Player/ScrollContainer/TextBubble") as VBoxContainer
 	return container

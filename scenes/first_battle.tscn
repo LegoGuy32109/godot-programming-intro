@@ -1,12 +1,9 @@
 [gd_scene format=4 uid="uid://mpi5713h3as5"]
 
-[ext_resource type="Script" uid="uid://dqp1t3nosy1xs" path="res://scripts/start_map.gd" id="1_wrrkv"]
 [ext_resource type="TileSet" uid="uid://mxa4giuljqv6" path="res://tiles/tiles.tres" id="2_1gy2a"]
-[ext_resource type="PackedScene" uid="uid://bcsrx8rrk6u35" path="res://scenes/player.tscn" id="3_wrrkv"]
 [ext_resource type="Texture2D" uid="uid://bx8a6bxd02t5r" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0124.png" id="5_1gy2a"]
 
-[node name="map" type="Node2D" unique_id=2142925335]
-script = ExtResource("1_wrrkv")
+[node name="FirstBattle" type="Node2D" unique_id=2142925335]
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=515525185]
 scale = Vector2(4, 4)
@@ -16,11 +13,6 @@ tile_set = ExtResource("2_1gy2a")
 [node name="Structures" type="TileMapLayer" parent="." unique_id=42150674]
 scale = Vector2(4, 4)
 tile_set = ExtResource("2_1gy2a")
-
-[node name="Spawn" type="Node2D" parent="." unique_id=477440702]
-position = Vector2(928, 352)
-
-[node name="Player" parent="Spawn" unique_id=1280679487 instance=ExtResource("3_wrrkv")]
 
 [node name="EnemySpawn" type="Node2D" parent="." unique_id=318435931]
 position = Vector2(224, 160)
