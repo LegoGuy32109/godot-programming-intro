@@ -1,8 +1,9 @@
 extends CanvasLayer
 
-const TRANSITION_RADIUS_OPEN := 1.5
+const TRANSITION_RADIUS_OPEN := 2.0
 const TRANSITION_RADIUS_CLOSED := 0.0
 const TRANSITION_DURATION := 0.35
+const OPEN_RADIUS_MARGIN := 0.05
 
 var _overlay: ColorRect
 var _shader_material: ShaderMaterial
@@ -58,18 +59,19 @@ func transition_to_scene(scene_path: String, center_uv: Vector2 = Vector2(0.5, 0
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_shader_material.set_shader_parameter("center", center_uv)
-	await _animate_radius(TRANSITION_RADIUS_OPEN, TRANSITION_RADIUS_CLOSED)
+	var open_radius := _get_open_radius(center_uv)
+	await _animate_radius(open_radius, TRANSITION_RADIUS_CLOSED)
 
 	var change_error := get_tree().change_scene_to_file(scene_path)
 	if change_error != OK:
 		push_error("SceneTransition: failed to load %s (error %d)" % [scene_path, change_error])
-		await _animate_radius(TRANSITION_RADIUS_CLOSED, TRANSITION_RADIUS_OPEN)
+		await _animate_radius(TRANSITION_RADIUS_CLOSED, open_radius)
 		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_busy = false
 		return
 
 	await get_tree().process_frame
-	await _animate_radius(TRANSITION_RADIUS_CLOSED, TRANSITION_RADIUS_OPEN)
+	await _animate_radius(TRANSITION_RADIUS_CLOSED, open_radius)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_busy = false
 
@@ -80,12 +82,13 @@ func transition_replace_level(level_container: Node, scene_path: String, center_
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_shader_material.set_shader_parameter("center", center_uv)
-	await _animate_radius(TRANSITION_RADIUS_OPEN, TRANSITION_RADIUS_CLOSED)
+	var open_radius := _get_open_radius(center_uv)
+	await _animate_radius(open_radius, TRANSITION_RADIUS_CLOSED)
 
 	var packed_scene := load(scene_path) as PackedScene
 	if packed_scene == null:
 		push_error("SceneTransition: failed to load packed scene %s" % scene_path)
-		await _animate_radius(TRANSITION_RADIUS_CLOSED, TRANSITION_RADIUS_OPEN)
+		await _animate_radius(TRANSITION_RADIUS_CLOSED, open_radius)
 		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_busy = false
 		return
@@ -99,7 +102,7 @@ func transition_replace_level(level_container: Node, scene_path: String, center_
 		push_error("SceneTransition: level_container is null.")
 
 	await get_tree().process_frame
-	await _animate_radius(TRANSITION_RADIUS_CLOSED, TRANSITION_RADIUS_OPEN)
+	await _animate_radius(TRANSITION_RADIUS_CLOSED, open_radius)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_busy = false
 
@@ -108,3 +111,23 @@ func _animate_radius(from_radius: float, to_radius: float) -> void:
 	var tween := create_tween()
 	tween.tween_property(_shader_material, "shader_parameter/radius", to_radius, TRANSITION_DURATION)
 	await tween.finished
+
+func _get_open_radius(center_uv: Vector2) -> float:
+	var viewport_size := get_viewport().get_visible_rect().size
+	if viewport_size.y <= 0.0:
+		return TRANSITION_RADIUS_OPEN
+
+	var aspect := viewport_size.x / viewport_size.y
+	var corners: Array[Vector2] = [
+		Vector2(0.0, 0.0),
+		Vector2(1.0, 0.0),
+		Vector2(0.0, 1.0),
+		Vector2(1.0, 1.0),
+	]
+	var max_distance := 0.0
+	for corner: Vector2 in corners:
+		var delta: Vector2 = corner - center_uv
+		delta.x *= aspect
+		max_distance = maxf(max_distance, delta.length())
+
+	return max_distance + OPEN_RADIUS_MARGIN
