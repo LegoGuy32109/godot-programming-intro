@@ -25,6 +25,10 @@ World="*res://scripts/world.gd"
 window/size/viewport_height=640
 window/stretch/mode="viewport"
 
+[global_group]
+
+Enemies="Entites that would damage the Player"
+
 [gui]
 
 theme/default_font_multichannel_signed_distance_field=true

@@ -73,6 +73,36 @@ func transition_to_scene(scene_path: String, center_uv: Vector2 = Vector2(0.5, 0
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_busy = false
 
+func transition_replace_level(level_container: Node, scene_path: String, center_uv: Vector2 = Vector2(0.5, 0.5)) -> void:
+	if _busy:
+		return
+	_busy = true
+	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	_shader_material.set_shader_parameter("center", center_uv)
+	await _animate_radius(TRANSITION_RADIUS_OPEN, TRANSITION_RADIUS_CLOSED)
+
+	var packed_scene := load(scene_path) as PackedScene
+	if packed_scene == null:
+		push_error("SceneTransition: failed to load packed scene %s" % scene_path)
+		await _animate_radius(TRANSITION_RADIUS_CLOSED, TRANSITION_RADIUS_OPEN)
+		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_busy = false
+		return
+
+	if level_container != null and level_container.get_child_count() > 0:
+		level_container.get_child(0).queue_free()
+
+	if level_container != null:
+		level_container.add_child(packed_scene.instantiate())
+	else:
+		push_error("SceneTransition: level_container is null.")
+
+	await get_tree().process_frame
+	await _animate_radius(TRANSITION_RADIUS_CLOSED, TRANSITION_RADIUS_OPEN)
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_busy = false
+
 func _animate_radius(from_radius: float, to_radius: float) -> void:
 	_shader_material.set_shader_parameter("radius", from_radius)
 	var tween := create_tween()

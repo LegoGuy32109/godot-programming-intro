@@ -11,9 +11,8 @@ const BATTLE_SCENE_PATH := "res://scenes/first_battle.tscn"
 
 const SceneTransition := preload("res://scripts/scene_transition.gd")
 
-@onready var ground: TileMapLayer = $Ground
-@onready var structures: TileMapLayer = $Structures
-@onready var player: Sprite2D = $Spawn/Player
+@onready var level_container: Node2D = $LevelContainer
+@onready var player: Sprite2D = $PlayerContainer/Player
 
 var world_grid: Array[Array] = []
 var player_tile: Vector2i = Vector2i.ZERO
@@ -75,7 +74,7 @@ func _take_turn(direction: Vector2i) -> void:
 	if _is_door(player_tile):
 		is_transitioning = true
 		var transition: CanvasLayer = SceneTransition.get_or_create(get_tree())
-		await transition.transition_to_scene(BATTLE_SCENE_PATH, _player_screen_uv())
+		await transition.transition_replace_level(level_container, BATTLE_SCENE_PATH, _player_screen_uv())
 		is_transitioning = false
 
 func _update_player_facing(direction: Vector2i) -> void:
@@ -88,14 +87,22 @@ func _can_move_to(tile: Vector2i) -> bool:
 	return _get_cell(tile) == CELL_FLOOR and not _is_impassable(tile)
 
 func _is_impassable(tile: Vector2i) -> bool:
-	var tile_data := structures.get_cell_tile_data(tile)
+	var current_structures := _get_structures_layer()
+	if current_structures == null:
+		return false
+
+	var tile_data := current_structures.get_cell_tile_data(tile)
 	if tile_data == null:
 		return false
 
 	return bool(tile_data.get_custom_data(IMPASSABLE_CUSTOM_DATA))
 
 func _is_door(tile: Vector2i) -> bool:
-	var tile_data := structures.get_cell_tile_data(tile)
+	var current_structures := _get_structures_layer()
+	if current_structures == null:
+		return false
+
+	var tile_data := current_structures.get_cell_tile_data(tile)
 	if tile_data == null:
 		return false
 
@@ -117,12 +124,40 @@ func _clamp_tile(tile: Vector2i) -> Vector2i:
 	)
 
 func _world_to_tile(world_position: Vector2) -> Vector2i:
-	var ground_local := ground.to_local(world_position)
-	return ground.local_to_map(ground_local)
+	var current_ground := _get_ground_layer()
+	if current_ground == null:
+		return Vector2i.ZERO
+
+	var ground_local := current_ground.to_local(world_position)
+	return current_ground.local_to_map(ground_local)
 
 func _snap_player_to_tile() -> void:
-	var tile_local_position := ground.map_to_local(player_tile)
-	player.global_position = ground.to_global(tile_local_position)
+	var current_ground := _get_ground_layer()
+	if current_ground == null:
+		return
+
+	var tile_local_position := current_ground.map_to_local(player_tile)
+	player.global_position = current_ground.to_global(tile_local_position)
+
+func _get_active_level() -> Node:
+	if level_container == null or level_container.get_child_count() == 0:
+		return null
+
+	return level_container.get_child(0)
+
+func _get_ground_layer() -> TileMapLayer:
+	var active_level := _get_active_level()
+	if active_level == null:
+		return null
+
+	return active_level.get_node_or_null("Ground") as TileMapLayer
+
+func _get_structures_layer() -> TileMapLayer:
+	var active_level := _get_active_level()
+	if active_level == null:
+		return null
+
+	return active_level.get_node_or_null("Structures") as TileMapLayer
 
 func _player_screen_uv() -> Vector2:
 	var viewport_size := get_viewport_rect().size

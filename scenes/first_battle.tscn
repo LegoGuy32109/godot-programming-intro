@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://mpi5713h3as5"]
 
+[ext_resource type="Script" uid="uid://dmv4pxdnsxkto" path="res://scripts/rat_patrol.gd" id="1_25q8y"]
 [ext_resource type="TileSet" uid="uid://mxa4giuljqv6" path="res://tiles/tiles.tres" id="2_1gy2a"]
 [ext_resource type="Texture2D" uid="uid://bx8a6bxd02t5r" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0124.png" id="5_1gy2a"]
 
@@ -20,3 +21,4 @@ position = Vector2(224, 160)
 [node name="Rat" type="Sprite2D" parent="EnemySpawn" unique_id=710245301]
 scale = Vector2(3, 3)
 texture = ExtResource("5_1gy2a")
+script = ExtResource("1_25q8y")

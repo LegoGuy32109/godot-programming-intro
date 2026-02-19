@@ -39,5 +39,9 @@ func _get_text_bubble_container() -> VBoxContainer:
 	if scene == null:
 		return null
 
-	var container := scene.get_node_or_null("Spawn/Player/ScrollContainer/TextBubble") as VBoxContainer
-	return container
+	var direct := scene.get_node_or_null("PlayerContainer/Player/ScrollContainer/TextBubble") as VBoxContainer
+	if direct != null:
+		return direct
+
+	var fallback := scene.find_child("TextBubble", true, false) as VBoxContainer
+	return fallback
