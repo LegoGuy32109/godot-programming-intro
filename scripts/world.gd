@@ -5,7 +5,7 @@ const FIREBALL_SCENE := preload("res://scenes/Effects/fireball.tscn")
 
 const DEFAULT_VISIBLE_SECONDS := 3.0
 const DEFAULT_FADE_SECONDS := 0.35
-const FIREBALL_STEP_SECONDS := 0.08
+const FIREBALL_STEP_SECONDS := 0.1
 const IMPASSABLE_CUSTOM_DATA := "IMPASSABLE"
 
 var _last_player_direction := Vector2i.RIGHT
@@ -68,17 +68,23 @@ func _travel_fireball(
 	var tile := start_tile
 
 	while true:
+		if not is_instance_valid(fireball):
+			return
+
+		await get_tree().create_timer(FIREBALL_STEP_SECONDS).timeout
+
 		var next_tile := tile + direction
 		if _is_blocked_for_fireball(ground, structures, next_tile):
 			break
 
 		tile = next_tile
-		var tween := create_tween()
-		tween.tween_property(fireball, "global_position", _tile_to_world(ground, tile), FIREBALL_STEP_SECONDS)
-		await tween.finished
+		fireball.global_position = _tile_to_world(ground, tile)
 
 	if is_instance_valid(fireball):
-		fireball.queue_free()
+		if fireball.has_method("resolve_impact"):
+			fireball.call("resolve_impact")
+		else:
+			fireball.queue_free()
 
 func _is_blocked_for_fireball(ground: TileMapLayer, structures: TileMapLayer, tile: Vector2i) -> bool:
 	if ground.get_cell_source_id(tile) == -1:

@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://crs811rph48dy" path="res://assets/textures/fire_blast.png" id="1_mqbqt"]
 [ext_resource type="AudioStream" uid="uid://d1f808k3g1kb1" path="res://assets/sounds/fire_breath_impact.ogg" id="2_l7ysv"]
+[ext_resource type="Script" uid="uid://b4n8hlfkdbpub" path="res://scenes/Effects/fireball.gd" id="3_fireball_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l7ysv"]
 atlas = ExtResource("1_mqbqt")
@@ -36,7 +37,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"default",
-"speed": 12.0
+"speed": 6.0
 }]
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_g1bsd"]
@@ -47,9 +48,11 @@ stream_0/stream = ExtResource("2_l7ysv")
 
 [node name="Fireball" type="Node2D" unique_id=1770302223]
 scale = Vector2(3, 3)
+script = ExtResource("3_fireball_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=790344498]
 rotation = 3.1415927
+scale = Vector2(1.27, 1.27)
 sprite_frames = SubResource("SpriteFrames_0ajsy")
 autoplay = "default"
 frame_progress = 0.79326874
