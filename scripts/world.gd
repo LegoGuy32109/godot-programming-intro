@@ -1,8 +1,105 @@
 extends Node
 
 const TEXT_BUBBLE_SCENE := preload("res://scenes/text_bubble.tscn")
+const FIREBALL_SCENE := preload("res://scenes/Effects/fireball.tscn")
+
 const DEFAULT_VISIBLE_SECONDS := 3.0
 const DEFAULT_FADE_SECONDS := 0.35
+const FIREBALL_STEP_SECONDS := 0.08
+const IMPASSABLE_CUSTOM_DATA := "IMPASSABLE"
+
+var _last_player_direction := Vector2i.RIGHT
+
+func set_last_player_direction(direction: Vector2i) -> void:
+	if direction == Vector2i.ZERO:
+		return
+
+	_last_player_direction = Vector2i(signi(direction.x), signi(direction.y))
+
+func cast(spell: int) -> void:
+	match spell:
+		Spells.Fireball:
+			_cast_fireball()
+		_:
+			push_warning("World.cast: Unknown spell id: %s" % spell)
+
+func _cast_fireball() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+
+	var player := scene.get_node_or_null("PlayerContainer/Player") as Node2D
+	if player == null:
+		player = scene.find_child("Player", true, false) as Node2D
+	if player == null:
+		push_warning("World.cast: Could not find Player node.")
+		return
+
+	var ground := _get_ground_layer(scene)
+	if ground == null:
+		push_warning("World.cast: Could not find Ground tile layer.")
+		return
+
+	var structures := _get_structures_layer(scene)
+	var start_tile := _world_to_tile(ground, player.global_position)
+	var direction := _last_player_direction
+	var first_tile := start_tile + direction
+
+	if _is_blocked_for_fireball(ground, structures, first_tile):
+		return
+
+	var fireball := FIREBALL_SCENE.instantiate() as Node2D
+	if fireball == null:
+		push_warning("World.cast: fireball scene root is not Node2D.")
+		return
+
+	scene.add_child(fireball)
+	fireball.rotation = Vector2.RIGHT.angle_to(Vector2(direction))
+	fireball.global_position = _tile_to_world(ground, first_tile)
+	_travel_fireball(fireball, ground, structures, first_tile, direction)
+
+func _travel_fireball(
+	fireball: Node2D,
+	ground: TileMapLayer,
+	structures: TileMapLayer,
+	start_tile: Vector2i,
+	direction: Vector2i
+) -> void:
+	var tile := start_tile
+
+	while true:
+		var next_tile := tile + direction
+		if _is_blocked_for_fireball(ground, structures, next_tile):
+			break
+
+		tile = next_tile
+		var tween := create_tween()
+		tween.tween_property(fireball, "global_position", _tile_to_world(ground, tile), FIREBALL_STEP_SECONDS)
+		await tween.finished
+
+	if is_instance_valid(fireball):
+		fireball.queue_free()
+
+func _is_blocked_for_fireball(ground: TileMapLayer, structures: TileMapLayer, tile: Vector2i) -> bool:
+	if ground.get_cell_source_id(tile) == -1:
+		return true
+
+	if structures == null:
+		return false
+
+	var tile_data := structures.get_cell_tile_data(tile)
+	if tile_data == null:
+		return false
+
+	return bool(tile_data.get_custom_data(IMPASSABLE_CUSTOM_DATA))
+
+func _world_to_tile(ground: TileMapLayer, world_position: Vector2) -> Vector2i:
+	var local_position := ground.to_local(world_position)
+	return ground.local_to_map(local_position)
+
+func _tile_to_world(ground: TileMapLayer, tile: Vector2i) -> Vector2:
+	var local_position := ground.map_to_local(tile)
+	return ground.to_global(local_position)
 
 func say(message: String, visible_seconds: float = DEFAULT_VISIBLE_SECONDS, fade_seconds: float = DEFAULT_FADE_SECONDS) -> void:
 	var container := _get_text_bubble_container()
@@ -45,3 +142,19 @@ func _get_text_bubble_container() -> VBoxContainer:
 
 	var fallback := scene.find_child("TextBubble", true, false) as VBoxContainer
 	return fallback
+
+func _get_ground_layer(scene: Node) -> TileMapLayer:
+	var level_container := scene.get_node_or_null("LevelContainer")
+	if level_container == null or level_container.get_child_count() == 0:
+		return null
+
+	var active_level := level_container.get_child(0)
+	return active_level.get_node_or_null("Ground") as TileMapLayer
+
+func _get_structures_layer(scene: Node) -> TileMapLayer:
+	var level_container := scene.get_node_or_null("LevelContainer")
+	if level_container == null or level_container.get_child_count() == 0:
+		return null
+
+	var active_level := level_container.get_child(0)
+	return active_level.get_node_or_null("Structures") as TileMapLayer

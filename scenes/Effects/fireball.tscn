@@ -46,11 +46,13 @@ streams_count = 1
 stream_0/stream = ExtResource("2_l7ysv")
 
 [node name="Fireball" type="Node2D" unique_id=1770302223]
+scale = Vector2(3, 3)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=790344498]
+rotation = 3.1415927
 sprite_frames = SubResource("SpriteFrames_0ajsy")
 autoplay = "default"
-frame_progress = 0.36715725
+frame_progress = 0.79326874
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1608959355]
 texture_repeat = 2

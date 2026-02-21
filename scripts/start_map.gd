@@ -23,6 +23,7 @@ func _ready() -> void:
 	player_tile = _clamp_tile(_world_to_tile(player.global_position))
 	_set_cell(player_tile, CELL_PLAYER)
 	_snap_player_to_tile()
+	World.set_last_player_direction(Vector2i.RIGHT)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_transitioning:
@@ -66,6 +67,7 @@ func _take_turn(direction: Vector2i) -> void:
 		return
 
 	_update_player_facing(direction)
+	World.set_last_player_direction(direction)
 	_set_cell(player_tile, CELL_FLOOR)
 	player_tile = target_tile
 	_set_cell(player_tile, CELL_PLAYER)
