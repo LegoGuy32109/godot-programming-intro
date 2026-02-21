@@ -7,7 +7,7 @@ const CELL_FLOOR := 0
 const CELL_PLAYER := 1
 const IMPASSABLE_CUSTOM_DATA := "IMPASSABLE"
 const DOOR_CUSTOM_DATA := "DOOR"
-const BATTLE_SCENE_PATH := "res://scenes/first_battle.tscn"
+const BATTLE_SCENE_PATH := "res://scenes/Levels/first_battle.tscn"
 
 const SceneTransition := preload("res://scripts/scene_transition.gd")
 
