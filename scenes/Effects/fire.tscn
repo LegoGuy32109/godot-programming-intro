@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://crtg7g6hij7js" path="res://assets/textures/fire_scorch.png" id="1_oannv"]
 [ext_resource type="AudioStream" uid="uid://c8lb7w8cv5bju" path="res://assets/sounds/fire_scorch_impact.ogg" id="2_fbqk6"]
+[ext_resource type="Script" path="res://scenes/Effects/fire.gd" id="3_fire_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5t0l4"]
 atlas = ExtResource("1_oannv")
@@ -53,6 +54,7 @@ stream_0/stream = ExtResource("2_fbqk6")
 
 [node name="Fire" type="Node2D" unique_id=1220445168]
 scale = Vector2(3, 3)
+script = ExtResource("3_fire_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1547391066]
 sprite_frames = SubResource("SpriteFrames_ediq1")

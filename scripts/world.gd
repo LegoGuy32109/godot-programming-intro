@@ -2,6 +2,7 @@ extends Node
 
 const TEXT_BUBBLE_SCENE := preload("res://scenes/text_bubble.tscn")
 const FIREBALL_SCENE := preload("res://scenes/Effects/fireball.tscn")
+const FIRE_SCENE := preload("res://scenes/Effects/fire.tscn")
 
 const DEFAULT_VISIBLE_SECONDS := 3.0
 const DEFAULT_FADE_SECONDS := 0.35
@@ -56,9 +57,17 @@ func _cast_fireball() -> void:
 	scene.add_child(fireball)
 	fireball.rotation = Vector2.RIGHT.angle_to(Vector2(direction))
 	fireball.global_position = _tile_to_world(ground, first_tile)
-	_travel_fireball(fireball, ground, structures, first_tile, direction)
+	if _try_hit_enemy_on_tile(scene, ground, first_tile):
+		if fireball.has_method("resolve_impact"):
+			fireball.call("resolve_impact")
+		else:
+			fireball.queue_free()
+		return
+
+	_travel_fireball(scene, fireball, ground, structures, first_tile, direction)
 
 func _travel_fireball(
+	scene: Node,
 	fireball: Node2D,
 	ground: TileMapLayer,
 	structures: TileMapLayer,
@@ -79,12 +88,41 @@ func _travel_fireball(
 
 		tile = next_tile
 		fireball.global_position = _tile_to_world(ground, tile)
+		if _try_hit_enemy_on_tile(scene, ground, tile):
+			break
 
 	if is_instance_valid(fireball):
 		if fireball.has_method("resolve_impact"):
 			fireball.call("resolve_impact")
 		else:
 			fireball.queue_free()
+
+func _try_hit_enemy_on_tile(scene: Node, ground: TileMapLayer, tile: Vector2i) -> bool:
+	var enemy := _find_enemy_on_tile(scene, ground, tile)
+	if enemy == null:
+		return false
+
+	var fire := FIRE_SCENE.instantiate() as Node2D
+	if fire != null:
+		scene.add_child(fire)
+		fire.global_position = _tile_to_world(ground, tile)
+
+	enemy.queue_free()
+	return true
+
+func _find_enemy_on_tile(scene: Node, ground: TileMapLayer, tile: Vector2i) -> Node2D:
+	for node in get_tree().get_nodes_in_group("Enemies"):
+		if not scene.is_ancestor_of(node):
+			continue
+
+		var enemy := node as Node2D
+		if enemy == null or enemy.is_queued_for_deletion():
+			continue
+
+		if _world_to_tile(ground, enemy.global_position) == tile:
+			return enemy
+
+	return null
 
 func _is_blocked_for_fireball(ground: TileMapLayer, structures: TileMapLayer, tile: Vector2i) -> bool:
 	if ground.get_cell_source_id(tile) == -1:
