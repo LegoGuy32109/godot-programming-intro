@@ -8,6 +8,8 @@ const CELL_PLAYER := 1
 const IMPASSABLE_CUSTOM_DATA := "IMPASSABLE"
 const DOOR_CUSTOM_DATA := "DOOR"
 const BATTLE_SCENE_PATH := "res://scenes/Levels/first_battle.tscn"
+const BATTLE_CLOSED_DOOR_ATLAS_COORDS := Vector2i(9, 3)
+const BATTLE_OPEN_DOOR_ATLAS_COORDS := Vector2i(9, 0)
 
 const SceneTransition := preload("res://scripts/scene_transition.gd")
 
@@ -17,6 +19,7 @@ const SceneTransition := preload("res://scripts/scene_transition.gd")
 var world_grid: Array[Array] = []
 var player_tile: Vector2i = Vector2i.ZERO
 var is_transitioning := false
+var _battle_exit_opened := false
 
 func _ready() -> void:
 	_build_world_grid()
@@ -34,6 +37,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if direction != Vector2i.ZERO:
 			_take_turn(direction)
 			get_viewport().set_input_as_handled()
+
+func _process(_delta: float) -> void:
+	if is_transitioning:
+		return
+
+	_try_open_battle_exit()
 
 func _build_world_grid() -> void:
 	world_grid.clear()
@@ -77,7 +86,48 @@ func _take_turn(direction: Vector2i) -> void:
 		is_transitioning = true
 		var transition: CanvasLayer = SceneTransition.get_or_create(get_tree())
 		await transition.transition_replace_level(level_container, BATTLE_SCENE_PATH, _player_screen_uv())
+		_battle_exit_opened = false
 		is_transitioning = false
+
+func _try_open_battle_exit() -> void:
+	if _battle_exit_opened:
+		return
+
+	var active_level := _get_active_level()
+	if active_level == null:
+		return
+	if active_level.scene_file_path != BATTLE_SCENE_PATH:
+		return
+	if _has_enemies_in_level(active_level):
+		return
+
+	var structures := _get_structures_layer()
+	if structures == null:
+		return
+
+	for tile in structures.get_used_cells():
+		if structures.get_cell_atlas_coords(tile) != BATTLE_CLOSED_DOOR_ATLAS_COORDS:
+			continue
+
+		var source_id := structures.get_cell_source_id(tile)
+		if source_id == -1:
+			continue
+
+		var alternative := structures.get_cell_alternative_tile(tile)
+		structures.set_cell(tile, source_id, BATTLE_OPEN_DOOR_ATLAS_COORDS, alternative)
+		_battle_exit_opened = true
+		return
+
+func _has_enemies_in_level(level: Node) -> bool:
+	for node in get_tree().get_nodes_in_group("Enemies"):
+		if not is_instance_valid(node):
+			continue
+		if node.is_queued_for_deletion():
+			continue
+		if level.is_ancestor_of(node):
+			return true
+
+	return false
 
 func _update_player_facing(direction: Vector2i) -> void:
 	if direction.x < 0:
