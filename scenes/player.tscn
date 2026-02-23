@@ -2,6 +2,20 @@
 
 [ext_resource type="Texture2D" uid="uid://ee2jwalhfm1x" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0084.png" id="1_3vyb7"]
 
+[sub_resource type="Gradient" id="Gradient_3vyb7"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_g2els"]
+gradient = SubResource("Gradient_3vyb7")
+use_hdr = true
+
+[sub_resource type="Gradient" id="Gradient_qhqgy"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0.84595203, 3.4172833e-06, 1.4439225e-06, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dqkch"]
+gradient = SubResource("Gradient_qhqgy")
+
 [node name="Player" type="Sprite2D" unique_id=1280679487]
 scale = Vector2(3, 3)
 texture = ExtResource("1_3vyb7")
@@ -30,3 +44,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 2
+
+[node name="HealthBar" type="TextureProgressBar" parent="." unique_id=537396944]
+custom_minimum_size = Vector2(32, 8)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -5.6639996
+offset_bottom = 2.3360043
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.425, 0.425)
+pivot_offset = Vector2(16, 0)
+size_flags_horizontal = 6
+size_flags_vertical = 4
+value = 100.0
+nine_patch_stretch = true
+texture_under = SubResource("GradientTexture1D_g2els")
+texture_progress = SubResource("GradientTexture1D_dqkch")

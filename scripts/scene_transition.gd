@@ -75,6 +75,36 @@ func transition_to_scene(scene_path: String, center_uv: Vector2 = Vector2(0.5, 0
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_busy = false
 
+func transition_to_scene_fade(scene_path: String, duration_seconds: float = 4.0, fade_color: Color = Color.BLACK) -> void:
+	if _busy:
+		return
+	_busy = true
+	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	_overlay.material = null
+	_overlay.color = Color(fade_color.r, fade_color.g, fade_color.b, 0.0)
+
+	var fade_out := create_tween()
+	fade_out.tween_property(_overlay, "color:a", 1.0, duration_seconds)
+	await fade_out.finished
+
+	var change_error := get_tree().change_scene_to_file(scene_path)
+	if change_error != OK:
+		push_error("SceneTransition: failed to load %s (error %d)" % [scene_path, change_error])
+		var recover := create_tween()
+		recover.tween_property(_overlay, "color:a", 0.0, 0.2)
+		await recover.finished
+		_restore_wipe_material()
+		_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_busy = false
+		return
+
+	await get_tree().process_frame
+	_overlay.color.a = 0.0
+	_restore_wipe_material()
+	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_busy = false
+
 func transition_replace_level(level_container: Node, scene_path: String, center_uv: Vector2 = Vector2(0.5, 0.5)) -> void:
 	if _busy:
 		return
@@ -131,3 +161,9 @@ func _get_open_radius(center_uv: Vector2) -> float:
 		max_distance = maxf(max_distance, delta.length())
 
 	return max_distance + OPEN_RADIUS_MARGIN
+
+func _restore_wipe_material() -> void:
+	_overlay.material = _shader_material
+	_overlay.color = Color("ba6f42")
+	_shader_material.set_shader_parameter("radius", TRANSITION_RADIUS_OPEN)
+	_shader_material.set_shader_parameter("wipe_color", Color("ba6f42"))

@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://dmer3ih3nx34y"]
+
+[ext_resource type="FontFile" uid="uid://dloto6n8x5blk" path="res://assets/fonts/KarenFat.ttf" id="1_xeevv"]
+[ext_resource type="Script" uid="uid://c8oulom3026n4" path="res://scripts/game_over.gd" id="2_lm8v8"]
+
+[sub_resource type="Theme" id="Theme_tbwuq"]
+default_font = ExtResource("1_xeevv")
+default_font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_wqhvx"]
+line_spacing = 10.0
+font = ExtResource("1_xeevv")
+font_size = 128
+font_color = Color(0.99974054, 4.8371403e-06, 9.62615e-07, 1)
+shadow_size = 35
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(0, 0)
+
+[node name="GameOver" type="PanelContainer" unique_id=175079292]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_lm8v8")
+
+[node name="ButtonControl" type="Control" parent="." unique_id=1428758028]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="RestartButton" type="Button" parent="ButtonControl" unique_id=242825593]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 119.0
+offset_right = 100.0
+offset_bottom = 169.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(100, 25)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_tbwuq")
+text = "restart"
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=826165641]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer" unique_id=1098059969]
+layout_mode = 2
+text = "YOU DIED"
+label_settings = SubResource("LabelSettings_wqhvx")
