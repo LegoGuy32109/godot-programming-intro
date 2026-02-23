@@ -2,11 +2,11 @@
 
 [ext_resource type="Texture2D" uid="uid://d3mcpxg8grd2l" path="res://assets/kenny-tiny-dungeon/Tilemap/tilemap_packed.png" id="1_rtq0s"]
 
-[sub_resource type="TileMapPattern" id="TileMapPattern_nu2oc"]
-tile_data = PackedInt32Array(0, 589824, 0)
-
 [sub_resource type="TileMapPattern" id="TileMapPattern_8uqph"]
 tile_data = PackedInt32Array(0, 262144, 0, 65536, 262144, 1, 131072, 589824, 4, 196608, 589824, 4, 1, 131072, 2, 65537, 131072, 0, 131073, 262144, 2, 196609, 589824, 0, 262145, 393216, 3, 2, 327680, 0, 65538, 327680, 1, 131074, 720896, 4, 196610, 720896, 4)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_rtq0s"]
+tile_data = PackedInt32Array(0, 589824, 3, 65536, 393216, 3)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xj2pi"]
 resource_name = "Dungeon"
@@ -184,5 +184,5 @@ custom_data_layer_0/type = 1
 custom_data_layer_1/name = "DOOR"
 custom_data_layer_1/type = 1
 sources/0 = SubResource("TileSetAtlasSource_xj2pi")
-pattern_0 = SubResource("TileMapPattern_nu2oc")
-pattern_1 = SubResource("TileMapPattern_8uqph")
+pattern_0 = SubResource("TileMapPattern_8uqph")
+pattern_1 = SubResource("TileMapPattern_rtq0s")

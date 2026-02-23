@@ -7,7 +7,9 @@ const CELL_FLOOR := 0
 const CELL_PLAYER := 1
 const IMPASSABLE_CUSTOM_DATA := "IMPASSABLE"
 const DOOR_CUSTOM_DATA := "DOOR"
-const BATTLE_SCENE_PATH := "res://scenes/Levels/first_battle.tscn"
+const INTRO_SCENE_PATH := "res://scenes/Levels/intro.tscn"
+const FIRST_BATTLE_SCENE_PATH := "res://scenes/Levels/first_battle.tscn"
+const RANDOM_BATTLE_SCENE_PATH := "res://scenes/Levels/random_battle.tscn"
 const BATTLE_CLOSED_DOOR_ATLAS_COORDS := Vector2i(9, 3)
 const BATTLE_OPEN_DOOR_ATLAS_COORDS := Vector2i(9, 0)
 
@@ -90,7 +92,7 @@ func _take_turn(direction: Vector2i) -> void:
 	if _is_door(player_tile):
 		is_transitioning = true
 		var transition: CanvasLayer = SceneTransition.get_or_create(get_tree())
-		await transition.transition_replace_level(level_container, BATTLE_SCENE_PATH, _player_screen_uv())
+		await transition.transition_replace_level(level_container, _next_level_on_door(), _player_screen_uv())
 		_battle_exit_opened = false
 		is_transitioning = false
 
@@ -101,7 +103,7 @@ func _try_open_battle_exit() -> void:
 	var active_level := _get_active_level()
 	if active_level == null:
 		return
-	if active_level.scene_file_path != BATTLE_SCENE_PATH:
+	if not _is_battle_scene(active_level.scene_file_path):
 		return
 	if _has_enemies_in_level(active_level):
 		return
@@ -110,18 +112,7 @@ func _try_open_battle_exit() -> void:
 	if structures == null:
 		return
 
-	for tile in structures.get_used_cells():
-		if structures.get_cell_atlas_coords(tile) != BATTLE_CLOSED_DOOR_ATLAS_COORDS:
-			continue
-
-		var source_id := structures.get_cell_source_id(tile)
-		if source_id == -1:
-			continue
-
-		var alternative := structures.get_cell_alternative_tile(tile)
-		structures.set_cell(tile, source_id, BATTLE_OPEN_DOOR_ATLAS_COORDS, alternative)
-		_battle_exit_opened = true
-		return
+	_battle_exit_opened = _open_exit_door(structures)
 
 func _has_enemies_in_level(level: Node) -> bool:
 	for node in get_tree().get_nodes_in_group("Enemies"):
@@ -141,6 +132,11 @@ func _update_player_facing(direction: Vector2i) -> void:
 		player_sprite.flip_h = false
 
 func _can_move_to(tile: Vector2i) -> bool:
+	var active_level := _get_active_level()
+	if active_level != null and _is_battle_scene(active_level.scene_file_path):
+		if _is_door(tile) and _has_enemies_in_level(active_level):
+			return false
+
 	return _get_cell(tile) == CELL_FLOOR and not _is_impassable(tile)
 
 func _is_impassable(tile: Vector2i) -> bool:
@@ -226,6 +222,52 @@ func _player_screen_uv() -> Vector2:
 		clampf(screen_position.x / viewport_size.x, 0.0, 1.0),
 		clampf(screen_position.y / viewport_size.y, 0.0, 1.0)
 	)
+
+func _next_level_on_door() -> String:
+	var active_level := _get_active_level()
+	if active_level == null:
+		return FIRST_BATTLE_SCENE_PATH
+
+	match active_level.scene_file_path:
+		FIRST_BATTLE_SCENE_PATH:
+			return RANDOM_BATTLE_SCENE_PATH
+		RANDOM_BATTLE_SCENE_PATH:
+			return RANDOM_BATTLE_SCENE_PATH
+		_:
+			return FIRST_BATTLE_SCENE_PATH
+
+func _is_battle_scene(scene_path: String) -> bool:
+	return scene_path == FIRST_BATTLE_SCENE_PATH or scene_path == RANDOM_BATTLE_SCENE_PATH
+
+func _open_exit_door(structures: TileMapLayer) -> bool:
+	for tile in structures.get_used_cells():
+		if structures.get_cell_atlas_coords(tile) != BATTLE_CLOSED_DOOR_ATLAS_COORDS:
+			continue
+
+		var source_id := structures.get_cell_source_id(tile)
+		if source_id == -1:
+			continue
+
+		var alternative := structures.get_cell_alternative_tile(tile)
+		structures.set_cell(tile, source_id, BATTLE_OPEN_DOOR_ATLAS_COORDS, alternative)
+		return true
+
+	for tile in structures.get_used_cells():
+		var tile_data := structures.get_cell_tile_data(tile)
+		if tile_data == null:
+			continue
+		if not bool(tile_data.get_custom_data(DOOR_CUSTOM_DATA)):
+			continue
+
+		var source_id := structures.get_cell_source_id(tile)
+		if source_id == -1:
+			continue
+
+		var alternative := structures.get_cell_alternative_tile(tile)
+		structures.set_cell(tile, source_id, BATTLE_OPEN_DOOR_ATLAS_COORDS, alternative)
+		return true
+
+	return false
 
 func _is_player_dead() -> bool:
 	if player == null:
