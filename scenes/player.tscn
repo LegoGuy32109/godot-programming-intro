@@ -5,6 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://bg1nvulprooou" path="res://assets/sounds/warrior_stomp_1.ogg" id="3_tuyoq"]
 [ext_resource type="AudioStream" uid="uid://c346ssowrq17v" path="res://assets/sounds/warrior_stomp_2.ogg" id="4_fjrip"]
 [ext_resource type="AudioStream" uid="uid://dcbrawj8re4bt" path="res://assets/sounds/warrior_stomp_3.ogg" id="5_smehm"]
+[ext_resource type="Script" uid="uid://tefxs5r58apl" path="res://scripts/player_controller.gd" id="6_yj8t1"]
 
 [sub_resource type="Gradient" id="Gradient_3vyb7"]
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
@@ -28,6 +29,9 @@ stream_1/stream = ExtResource("4_fjrip")
 stream_2/stream = ExtResource("5_smehm")
 
 [node name="Player" type="Node2D" unique_id=193314867]
+
+[node name="Controller" type="Node" parent="." unique_id=119906153]
+script = ExtResource("6_yj8t1")
 
 [node name="HealthBar" type="TextureProgressBar" parent="." unique_id=537396944]
 custom_minimum_size = Vector2(32, 8)
@@ -57,10 +61,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -16.5
-offset_top = -434.535
-offset_right = -5.5
-offset_bottom = -300.535
+offset_left = -100.207
+offset_top = -231.348
+offset_right = 99.793
+offset_bottom = -31.348007
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 4
@@ -70,6 +74,7 @@ vertical_scroll_mode = 0
 
 [node name="TextBubble" type="VBoxContainer" parent="ScrollContainer" unique_id=1542005940]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 200)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

@@ -1,4 +1,4 @@
-extends Node2D
+extends Node
 
 const MAX_HEALTH := 100.0
 const HIT_DAMAGE := 20.0
@@ -8,10 +8,11 @@ const GAME_OVER_FADE_SECONDS := 4.0
 const GAME_OVER_OVERLAY_LAYER := 1000
 const GameOverScene := preload("res://scenes/game_over.tscn")
 
-@onready var health_bar: TextureProgressBar = $HealthBar
-@onready var player_sprite: Sprite2D = $Sprite
-@onready var hurt_sound: AudioStreamPlayer2D = $HurtSound
-@onready var death_sound: AudioStreamPlayer2D = $DeathSound
+@onready var health_bar: TextureProgressBar = $"../HealthBar"
+@onready var player_root: Node2D = get_parent() as Node2D
+@onready var player_sprite: Sprite2D = $"../Sprite"
+@onready var hurt_sound: AudioStreamPlayer2D = $"../HurtSound"
+@onready var death_sound: AudioStreamPlayer2D = $"../DeathSound"
 
 var _health := MAX_HEALTH
 var _invulnerable_until := 0.0
@@ -37,7 +38,7 @@ func _try_take_enemy_hit() -> void:
 			continue
 		if not is_instance_valid(enemy) or enemy.is_queued_for_deletion():
 			continue
-		if enemy.global_position.is_equal_approx(global_position):
+		if player_root != null and enemy.global_position.is_equal_approx(player_root.global_position):
 			_take_hit()
 			return
 

@@ -230,7 +230,11 @@ func _player_screen_uv() -> Vector2:
 func _is_player_dead() -> bool:
 	if player == null:
 		return false
-	if not player.has_method("is_dead"):
+
+	var player_controller := player.get_node_or_null("Controller")
+	if player_controller == null:
+		return false
+	if not player_controller.has_method("is_dead"):
 		return false
 
-	return bool(player.call("is_dead"))
+	return bool(player_controller.call("is_dead"))
