@@ -14,7 +14,8 @@ const BATTLE_OPEN_DOOR_ATLAS_COORDS := Vector2i(9, 0)
 const SceneTransition := preload("res://scripts/scene_transition.gd")
 
 @onready var level_container: Node2D = $LevelContainer
-@onready var player: Sprite2D = $PlayerContainer/Player
+@onready var player: Node2D = $PlayerContainer/Player
+@onready var player_sprite: Sprite2D = $PlayerContainer/Player/Sprite
 
 var world_grid: Array[Array] = []
 var player_tile: Vector2i = Vector2i.ZERO
@@ -30,6 +31,8 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_transitioning:
+		return
+	if _is_player_dead():
 		return
 
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -67,6 +70,8 @@ func _key_to_direction(keycode: Key) -> Vector2i:
 
 func _take_turn(direction: Vector2i) -> void:
 	if is_transitioning:
+		return
+	if _is_player_dead():
 		return
 
 	var target_tile := player_tile + direction
@@ -131,9 +136,9 @@ func _has_enemies_in_level(level: Node) -> bool:
 
 func _update_player_facing(direction: Vector2i) -> void:
 	if direction.x < 0:
-		player.flip_h = true
+		player_sprite.flip_h = true
 	elif direction.x > 0:
-		player.flip_h = false
+		player_sprite.flip_h = false
 
 func _can_move_to(tile: Vector2i) -> bool:
 	return _get_cell(tile) == CELL_FLOOR and not _is_impassable(tile)
@@ -221,3 +226,11 @@ func _player_screen_uv() -> Vector2:
 		clampf(screen_position.x / viewport_size.x, 0.0, 1.0),
 		clampf(screen_position.y / viewport_size.y, 0.0, 1.0)
 	)
+
+func _is_player_dead() -> bool:
+	if player == null:
+		return false
+	if not player.has_method("is_dead"):
+		return false
+
+	return bool(player.call("is_dead"))
