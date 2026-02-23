@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://barwlrljlafyj" path="res://scenes/Levels/intro.tscn" id="2_kdmts"]
 [ext_resource type="Script" uid="uid://dqp1t3nosy1xs" path="res://scripts/start_map.gd" id="3_4g6jk"]
 [ext_resource type="PackedScene" uid="uid://bcsrx8rrk6u35" path="res://scenes/player.tscn" id="3_bodal"]
+[ext_resource type="Script" path="res://scripts/player_controller.gd" id="4_h24v8"]
 
 [node name="Map" type="Node2D" unique_id=2142925335]
 script = ExtResource("3_4g6jk")
@@ -15,3 +16,4 @@ script = ExtResource("3_4g6jk")
 position = Vector2(288, 288)
 
 [node name="Player" parent="PlayerContainer" unique_id=1280679487 instance=ExtResource("3_bodal")]
+script = ExtResource("4_h24v8")

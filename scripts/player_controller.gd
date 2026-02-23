@@ -10,6 +10,8 @@ const GameOverScene := preload("res://scenes/game_over.tscn")
 
 @onready var health_bar: TextureProgressBar = $HealthBar
 @onready var player_sprite: Sprite2D = $Sprite
+@onready var hurt_sound: AudioStreamPlayer2D = $HurtSound
+@onready var death_sound: AudioStreamPlayer2D = $DeathSound
 
 var _health := MAX_HEALTH
 var _invulnerable_until := 0.0
@@ -44,6 +46,8 @@ func _take_hit() -> void:
 		return
 
 	_health = clampf(_health - HIT_DAMAGE, 0.0, MAX_HEALTH)
+	if hurt_sound != null:
+		hurt_sound.play()
 	_update_health_bar()
 	if _health <= 0.0:
 		_die()
@@ -60,6 +64,8 @@ func _die() -> void:
 
 	player_sprite.rotation_degrees = 90.0
 	player_sprite.self_modulate = HIT_FLASH_COLOR
+	if death_sound != null:
+		death_sound.play()
 
 	var game_over_overlay := GameOverScene.instantiate() as Control
 	if game_over_overlay == null:

@@ -1,7 +1,10 @@
 [gd_scene format=3 uid="uid://bcsrx8rrk6u35"]
 
 [ext_resource type="Texture2D" uid="uid://ee2jwalhfm1x" path="res://assets/kenny-tiny-dungeon/Tiles/tile_0084.png" id="1_3vyb7"]
-[ext_resource type="Script" uid="uid://tefxs5r58apl" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="AudioStream" uid="uid://bq3h2s5c2e0qa" path="res://assets/sounds/warrior_enrage.ogg" id="2_qlg0r"]
+[ext_resource type="AudioStream" uid="uid://bg1nvulprooou" path="res://assets/sounds/warrior_stomp_1.ogg" id="3_tuyoq"]
+[ext_resource type="AudioStream" uid="uid://c346ssowrq17v" path="res://assets/sounds/warrior_stomp_2.ogg" id="4_fjrip"]
+[ext_resource type="AudioStream" uid="uid://dcbrawj8re4bt" path="res://assets/sounds/warrior_stomp_3.ogg" id="5_smehm"]
 
 [sub_resource type="Gradient" id="Gradient_3vyb7"]
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
@@ -17,8 +20,14 @@ colors = PackedColorArray(0.84595203, 3.4172833e-06, 1.4439225e-06, 1)
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_dqkch"]
 gradient = SubResource("Gradient_qhqgy")
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ur7pv"]
+random_pitch = 1.2599211
+streams_count = 3
+stream_0/stream = ExtResource("3_tuyoq")
+stream_1/stream = ExtResource("4_fjrip")
+stream_2/stream = ExtResource("5_smehm")
+
 [node name="Player" type="Node2D" unique_id=193314867]
-script = ExtResource("1_g2els")
 
 [node name="HealthBar" type="TextureProgressBar" parent="." unique_id=537396944]
 custom_minimum_size = Vector2(32, 8)
@@ -69,3 +78,11 @@ alignment = 2
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1280679487]
 scale = Vector2(3, 3)
 texture = ExtResource("1_3vyb7")
+
+[node name="DeathSound" type="AudioStreamPlayer2D" parent="." unique_id=1037247488]
+stream = ExtResource("2_qlg0r")
+pitch_scale = 0.6
+
+[node name="HurtSound" type="AudioStreamPlayer2D" parent="." unique_id=679744824]
+stream = SubResource("AudioStreamRandomizer_ur7pv")
+attenuation = 0.0011226109

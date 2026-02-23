@@ -52,10 +52,10 @@ func _step() -> void:
 	_current_tile = next_tile
 	_snap_to_tile(_current_tile)
 
-func _axis_step(sign: int) -> Vector2i:
+func _axis_step(step_sign: int) -> Vector2i:
 	if patrol_axis == PatrolAxis.RIGHT_LEFT:
-		return Vector2i(sign, 0)
-	return Vector2i(0, sign)
+		return Vector2i(step_sign, 0)
+	return Vector2i(0, step_sign)
 
 func _is_blocked(tile: Vector2i) -> bool:
 	if tile.x < 0 or tile.y < 0:
