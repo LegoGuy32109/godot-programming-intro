@@ -1,3 +1,5 @@
+Go here [Godot Web Editor](https://editor.godotengine.org/releases/latest/) and load zip
+
 # Syntax
 
 GDscript uses indentation to indicate lines of code

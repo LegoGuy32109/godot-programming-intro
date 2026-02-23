@@ -21,6 +21,10 @@ func cast(spell: int) -> void:
 	match spell:
 		Spells.Fireball:
 			_cast_fireball()
+		Spells.Freeze:
+			print("World.cast: Freeze not implemented yet")
+		Spells.EldrichBlast:
+			print("World.cast: EldrichBlast not implemented yet")
 		_:
 			push_warning("World.cast: Unknown spell id: %s" % spell)
 

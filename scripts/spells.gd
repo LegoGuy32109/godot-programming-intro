@@ -1,5 +1,7 @@
 extends Node
 
 enum {
-	Fireball
+	Fireball,
+	Freeze,
+	EldrichBlast
 }
